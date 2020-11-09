@@ -41,7 +41,11 @@ This system of spins is immersed in a heat bath of constant temperature T and in
 \begin{equation}
 H(s)= -J \sum_{<x,y>}s_{x}s_{y} - h \sum_{x}s_{x}
 \end{equation}
-$ <x,y> $ denotes the nearest-neighbor pair x and y on the chain, J is a real number and we assume periodic boundary conditions.
+$ <x,y> $ denotes the nearest-neighbor pair x and y on the chain, J is a real number and we assume periodic boundary conditions. That means that spins couple only to the nearest neighbor and $s_{N-1}$ couples with $s_0$ with N the number of total spin-particles. We define the partition function:
+\begin{equation}
+	Z= \sum_{s'} \exp(-\frac{H(s')}{k_B T})
+\end{equation}
+where we sum over all possible spin field $s=(s_0,s_1,...,s_{N-1})$. For simpler notation, we switch the system of units such that $k_B=1$. We this assumption we get the dimensionless ratios $\frac{J}{T}$ and $\frac{h}{T}$.
 
 In 1d the partition function can be determined analytically as a function of N, J/T, and h/T as,
 \begin{equation}
@@ -54,18 +58,16 @@ Where,
 	\end{equation}
 The magnetization can be determine with the help of Ising model as, 
 \begin{equation}
-<m> = -\frac{\text{h}}{\text{T}} \frac{\partial\log \text{Z}}{\partial \text{h}}
+<m> = \frac{\text{h}}{\text{T}} \frac{\partial\log \text{Z}}{\partial \text{h}}
 \label{equ:m}
 \end{equation}  
 
 \section{Analysis}
-In the partition function total angular momentum, J is the interaction of the spins in a system. It is $ \pm 1 $ for parallel and 0 for 
-anti-parallel spins for spin $ \frac{1}{2} $ particles. Also, J= 2 for spin 1 particles. For parallel orientation, potential energy gets reduced compared to anti-parallel arrangement. since Coulomb-repulsion is reduced
-due to larger average inter particle distance.\\
+In the partition function J is the coupling constant between two spins. We assume only direct neighbors have $J\neq 0$. For $J>0$ we call the interaction ferromagnetic. With other words, the spins tend to align parallel to the external Magnetic field. Ferromagnetic materials will form permanent magnets. For $J<0$ we call the interaction antiferromagnetic. So the spins are antiparallel and we dont get any permanent magnitization.\\
 
-To determine the dependency of $ <m> $ on the external field strength h for fixed N and the number of spins N for fixed h. To do so, we have taken the N=20, J=1 and $h \ [-1, 1]$. Here, for analytic solution we used the expression \ref{equ:m} without considering all spin configurations but we can also determined the numerical value by simulation.
+To determine the dependency of $ <m> $ on the external field strength h for fixed N and the number of spins N for fixed h. To do so, we have taken the N=20, J=1 and $h \in [-1, 1]$. Here, for analytic solution we used the expression \ref{equ:m}.
 
-To compare these both(numeric and analytic) results, we plotted a graph numbers vs magnetization with change the external magnetic field. from figure \ref{fig:Nconst}, We can see that at h=0 there is no any magnetization; however, if the external field is positive, we also get a positive magnetization. 
+To compare these both(numeric and analytic) results, we plotted a graph numbers vs magnetization with change the external magnetic field. From figure \ref{fig:Nconst}, we can see that the magnetization is linear in h. In other words the magnetization depends linear with the external magnetic field. We would expect to have no magnetization with no external magnetic field and we see this is the case for h=0. Also we can see that the numeric and analytic solution match perfectly.
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=0.8\linewidth]{Nconst.png}
@@ -74,7 +76,7 @@ To compare these both(numeric and analytic) results, we plotted a graph numbers 
 \end{figure}
 
 
-Again, we have plotted a graph number vs magnetization with considering constant external magnetic field. We have chosen h= 0.5. Also, we can compare these analytic and numerical data. From figure \ref{fig:hconst} we can see that change N. but since we are looking for the magnetization per spin. we expect that it does not change with higher N and this is the case
+Again, we have plotted a graph number vs magnetization with considering constant external magnetic field. We have chosen $h= 0.5$. From figure \ref{fig:hconst} we can see that change N but since we are looking for the magnetization per spin. We expect that it does not change with higher N and this is the case. In this plot we see that the numerical and analytical solution don't match perfectly but the presicion is still very good. 
    \begin{figure}[H]
    	\centering
    	\includegraphics[width=0.8\linewidth]{hconst.png}
@@ -82,10 +84,10 @@ Again, we have plotted a graph number vs magnetization with considering constant
    	\label{fig:hconst}
    \end{figure}
 \section{conclusion}
-
+In conclusion we can see that we can describe this system analytically and numerically. We see that these both methods match each other quit good and both ways give the solution to the given problem. We also saw in this exercise that in ferromagnetic materials the internal magnetic field ist parallel to the external field and it increases or decreses linear with the external field. We also saw that the magnitization per Spin does not change with more particles. 
 \begin{thebibliography}{12}
 \bibitem{exercise-sheet} 
-	Unknown, Exercise-sheet, 2020.
+	Thomas Luu, Andreas Nogga, Marcus Petschlies and  Andreas Wirzba, Exercise-sheet, 2020. 
 		
 \bibitem{wiki} 
 	Satya pal singh, \textit{The Ising Model: Brief Introduction and Its Application}, 2020.

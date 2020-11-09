@@ -63,9 +63,8 @@ double Z;
 
 int main()
 {
-    T=300;//We let the Temperature T const= 300 Kelvin 
+    T=300.0;//We let the Temperature T const= 300 
     double delta_h = 10e-6;//this is the infintesimal for our derivativ
-
     fstream f;//this let us open/write in external Data
 
     //N=const
@@ -73,8 +72,8 @@ int main()
      N=20;//first we start with n=const
     for(int m=0;m<30;m++){//We do it for 30 different h for -1 to 1
     h=-1.0+2.0*m/29;
-    magnetization= T/N*((log(z(h+delta_h,N,T))-log(z(h-delta_h,N,T)))/(2*delta_h));//formular on the sheet with numerical derivativ.
-    magnetization_analytic=T/N*((log(z_analytic(h+delta_h,N,T))-log(z_analytic(h-delta_h,N,T)))/(2*delta_h));//analytic formular on the sheet
+    magnetization= 1000*T/N*((log(z(h+delta_h,N,T))-log(z(h-delta_h,N,T)))/(2*delta_h));//formular on the sheet with numerical derivativ. Added *1000 so the plots look nice
+    magnetization_analytic=1000*T/N*((log(z_analytic(h+delta_h,N,T))-log(z_analytic(h-delta_h,N,T)))/(2*delta_h));//analytic formular on the sheet
     f << h <<' '<< magnetization <<' '<< magnetization_analytic << endl;//Write in Nconst.dat. endl makes a new line
     }
     f.close();//we have to close Nconst.dat
@@ -84,8 +83,8 @@ int main()
     h=0.5;//h is no const
     for(int m=1;m<21;m++){// we do it vor N=1...20
     N=m;
-    magnetization= T/N*((log(z(h+delta_h,N,T))-log(z(h-delta_h,N,T)))/(2*delta_h));//formular on the sheet with numerical derivativ.
-    magnetization_analytic=T/N*((log(z_analytic(h+delta_h,N,T))-log(z_analytic(h-delta_h,N,T)))/(2*delta_h));//analytic formular on the sheet
+    magnetization= 1000*T/N*((log(z(h+delta_h,N,T))-log(z(h-delta_h,N,T)))/(2*delta_h));//formular on the sheet with numerical derivativ.
+    magnetization_analytic=1000*T/N*((log(z_analytic(h+delta_h,N,T))-log(z_analytic(h-delta_h,N,T)))/(2*delta_h));//analytic formular on the sheet
     f << N <<' '<< magnetization <<' '<< magnetization_analytic << endl;//write in hconst.dat
     }
     f.close();//close hconst
