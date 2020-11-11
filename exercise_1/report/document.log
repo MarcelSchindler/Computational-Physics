@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.20 (MiKTeX 2.9.7200 64-bit) (preloaded format=pdflatex 2019.11.9)  10 NOV 2020 12:13
+This is pdfTeX, Version 3.14159265-2.6-1.40.20 (MiKTeX 2.9.7200 64-bit) (preloaded format=pdflatex 2019.11.9)  11 NOV 2020 14:34
 entering extended mode
 **./document.tex
 (document.tex
@@ -1155,42 +1155,42 @@ Underfull \hbox (badness 10000) in paragraph at lines 66--67
 <Nconst.png, id=28, 433.62pt x 289.08pt>
 File: Nconst.png Graphic file (type png)
 <use Nconst.png>
-Package pdftex.def Info: Nconst.png  used on input line 73.
+Package pdftex.def Info: Nconst.png  used on input line 76.
 (pdftex.def)             Requested size: 358.50612pt x 239.01443pt.
 <hconst.png, id=31, 433.62pt x 289.08pt>
 File: hconst.png Graphic file (type png)
 <use hconst.png>
-Package pdftex.def Info: hconst.png  used on input line 82.
+Package pdftex.def Info: hconst.png  used on input line 85.
 (pdftex.def)             Requested size: 358.50612pt x 239.01443pt.
  [2pdfTeX warning (ext4): destination with the same identifier (name{figure.1})
  has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.86 \section
+l.89 \section
              {conclusion} <./Nconst.png>]
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 97.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 100.
  [3pdfTeX warning (ext4): destination with the same identifier (name{figure.2})
  has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.97 \end{document}
-                    <./hconst.png>]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 97.
+l.100 \end{document}
+                     <./hconst.png>]
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 100.
  (document.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 97.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 97.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 100.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 100.
 Package rerunfilecheck Info: File `document.out' has not changed.
 (rerunfilecheck)             Checksum: D41D8CD98F00B204E9800998ECF8427E;0.
 Package logreq Info: Writing requests to 'document.run.xml'.
 \openout1 = `document.run.xml'.
 
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 97.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 100.
  ) 
 Here is how much of TeX's memory you used:
- 30519 strings out of 492453
- 580183 string characters out of 3129820
+ 30520 strings out of 492453
+ 580195 string characters out of 3129820
  1129802 words of memory out of 3000000
  34585 multiletter control sequences out of 15000+200000
  543639 words of font info for 69 fonts, out of 3000000 for 9000
@@ -1206,10 +1206,11 @@ sfonts/cm/cmr8.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/
 cmssbx10.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmsy10
 .pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmsy6.pfb><C:/
 Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmsy8.pfb><C:/Program F
-iles/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmti10.pfb>
-Output written on document.pdf (3 pages, 161945 bytes).
+iles/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmti10.pfb><C:/Program Files/MiK
+TeX 2.9/fonts/type1/public/amsfonts/symbols/msbm10.pfb>
+Output written on document.pdf (3 pages, 163593 bytes).
 PDF statistics:
- 105 PDF objects out of 1000 (max. 8388607)
- 18 named destinations out of 1000 (max. 500000)
+ 111 PDF objects out of 1000 (max. 8388607)
+ 19 named destinations out of 1000 (max. 500000)
  43 words of extra memory for PDF output out of 10000 (max. 10000000)
 

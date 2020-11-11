@@ -62,6 +62,9 @@ double T;
 int N;
 double h;
 long double Z;
+double error_h;
+double error_N;
+double error_gesamt;
 
 
 
@@ -80,9 +83,18 @@ int main()
     for(int m=0;m<30;m++){//We do it for 30 different h for -1 to 1
     h=-1.0+2.0*m/29;
     magnetization= T/N*((log(z(h+delta_h,N,T))-log(z(h-delta_h,N,T)))/(2*delta_h));//formular on the sheet with numerical derivativ.
+
+    //Error analysis. Only in h dependancy because we saw that for different N the magnitization per Spin does not change
+    error_h= T/N*((log(z(h*h+delta_h,N,T))-log(z(h*h-delta_h,N,T)))/(2*delta_h));
+    error_h+= -(T/N*((log(z(h+delta_h,N,T))-log(z(h-delta_h,N,T)))/(2*delta_h))*T/N*((log(z(h+delta_h,N,T))-log(z(h-delta_h,N,T)))/(2*delta_h)));
+    error_h=sqrt(fabs(error_h));
+    
+
     magnetization_analytic=T/N*((log(z_analytic(h+delta_h,N,T))-log(z_analytic(h-delta_h,N,T)))/(2*delta_h));//analytic formular on the sheet
     magnetization_analytic_exact=T*((log(z_analyticexact(h+delta_h,T))-log(z_analyticexact(h-delta_h,T)))/(2*delta_h));//analytic formular on the sheet
-    f << h <<' '<< magnetization <<' '<< magnetization_analytic<< ' '<< magnetization_analytic_exact << endl;//Write in Nconst.dat. endl makes a new line
+
+    //Write in Nconst.dat. endl makes a new line
+    f << h <<' '<< magnetization << ' '<< error_h<<' '<< magnetization_analytic<< ' '<< magnetization_analytic_exact << endl;
     }
     f.close();//we have to close Nconst.dat
 
@@ -93,7 +105,14 @@ int main()
     N=m;
     magnetization= T/N*((log(z(h+delta_h,N,T))-log(z(h-delta_h,N,T)))/(2*delta_h));//formular on the sheet with numerical derivativ.
     magnetization_analytic=T/N*((log(z_analytic(h+delta_h,N,T))-log(z_analytic(h-delta_h,N,T)))/(2*delta_h));//analytic formular on the sheet
-    f << N <<' '<< magnetization <<' '<< magnetization_analytic << endl;//write in hconst.dat
+
+    //Error analysis. Only in h dependancy because we saw that for different N the magnitization per Spin does not change
+    error_h= T/N*((log(z(h*h+delta_h,N,T))-log(z(h*h-delta_h,N,T)))/(2*delta_h));
+    error_h+= -(T/N*((log(z(h+delta_h,N,T))-log(z(h-delta_h,N,T)))/(2*delta_h))*T/N*((log(z(h+delta_h,N,T))-log(z(h-delta_h,N,T)))/(2*delta_h)));
+    error_h=sqrt(fabs(error_h));
+
+    //write in hconst.dat
+    f << N <<' '<< magnetization << ' '<< error_h<< ' '<< magnetization_analytic << endl;
     }
     f.close();//close hconst
 

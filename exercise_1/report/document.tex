@@ -67,11 +67,14 @@ In the partition function J is the coupling constant between two spins. We assum
 
 To determine the dependency of $ <m> $ on the external field strength h for fixed N and the number of spins N for fixed h. To do so, we have taken the N=20, J=1 and $h \in [-1, 1]$. Here, for analytic solution we used the expression \ref{equ:m}.
 
-To compare these both(numeric and analytic) results, we plotted a graph numbers vs magnetization with change the external magnetic field. From figure \ref{fig:Nconst}, we can see that the magnetization is parallel to the external field. We would expect to have no magnetization with no external magnetic field and we see this is the case for h=0. Also we can see that the numeric and analytic solution match perfectly.
+To compare these both(numeric and analytic) results, we plotted a graph numbers vs magnetization with change the external magnetic field. From figure \ref{fig:Nconst}, we can see that the magnetization is parallel to the external field. We would expect to have no magnetization with no external magnetic field and we see this is the case for h=0. Also we can see that the numeric and analytic solution match perfectly. We also took the thermodynamic limit but it was exacly the same compare to the analytic equation with N dependancy. This is why we did not plot the thermodynamic limit. For the error Evaluation we took:
+\begin{equation}
+	\sigma=\sqrt{\mathbb{E}(x^2)-\mathbb{E}(x)^2}\text{.}
+\end{equation}
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=0.8\linewidth]{Nconst.png}
-	\caption{The number of spins N for fixed h.}
+	\caption{The external field strength h for fixed N.}
 	\label{fig:Nconst}
 \end{figure}
 
@@ -80,7 +83,7 @@ Again, we have plotted a graph number vs magnetization with considering constant
    \begin{figure}[H]
    	\centering
    	\includegraphics[width=0.8\linewidth]{hconst.png}
-   	\caption{The external field strength h for fixed N.}
+   	\caption{The number of spins N for fixed h.}
    	\label{fig:hconst}
    \end{figure}
 \section{conclusion}
