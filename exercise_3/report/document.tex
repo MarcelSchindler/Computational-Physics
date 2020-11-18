@@ -1,0 +1,71 @@
+\documentclass[11pt, a4paper, DIV=12]{scrartcl}
+
+% useful packages 
+\usepackage{mathtools}
+\usepackage{physics}
+\usepackage{graphicx}					  
+\graphicspath{{figs/}}
+
+
+
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{hyperref}
+\usepackage[separate-uncertainty=true]{siunitx}
+\usepackage{xcolor}
+\usepackage{braket} % easy braket notation
+\usepackage{enumitem}
+\usepackage{booktabs}
+\usepackage{here}
+\usepackage{cprotect}
+
+\usepackage[backend=biber, sorting=none]{biblatex}
+\bibliography{refs.bib}
+
+% \numberwithin{equation}{section}
+
+\title{Applying HMC to the long-range Ising model}
+\date{\today}
+\author{Harilal Bhattarai \& Marcel Schindler}
+\begin{document}
+	\maketitle
+\section{Introduction}
+
+We already did the one dimensional and two dimensional Ising mode in our previous two exercises. Here we can discuss about long-range Ising model by applying HMC. In this report, we can just include some necessary expression on theory part and in next topic we will illustrate the questions of exercise sheet and analyses the other results. Finally, we can conclude our findings in last part of the report.
+\section{Theory}
+Here we, also, use the Hamiltonian as:
+\begin{equation}
+H(s, h)= -J \sum_{<x,y>}s_{x}s_{y} - h \sum_{x}s_{x}
+\end{equation}
+
+Here after, we can use $ J > 0 $, therefore the partition function can be written as,
+\begin{equation}
+Z[J>0]=\int_{-\infty}^{\infty}\frac{d\phi}{\sqrt{2\pi \beta \hat{J}}} e^{-\frac{\phi^2}{2\beta \hat{J}} + \text{N}\log(2\cosh(\beta h \pm \phi))}
+\end{equation}
+
+We define the artificial Hamiltonian as,
+
+\begin{equation}
+{H(P, \phi)}= \frac{p^2}{2} + \frac{\phi^2}{2\beta \hat{J}} - \text{N}\log 2(\cosh(\beta h + \phi))
+\label{equ:ArtificialH}
+\end{equation}
+
+\section{Problems Solving and Analysis}
+
+To do question 2 of the exercise sheet, from equation \ref{equ:ArtificialH} we get,
+
+\begin{equation}
+\dot{\phi}=\frac{\partial H}{\partial P}= P
+\end{equation}
+Also,
+\begin{equation}
+\dot{P}=-\frac{\partial H}{\partial \phi}= \frac{\phi}{\beta \hat{J}} - N \tanh(\beta h+ \phi)
+\end{equation}
+
+\begin{thebibliography}{12}
+	\bibitem{exercise-sheet} 
+	Thomas Luu, Andreas Nogga, Marcus Petschlies and  Andreas Wirzba, Exercise-sheet, 2020. 
+	
+	
+\end{thebibliography}	
+\end{document}	
