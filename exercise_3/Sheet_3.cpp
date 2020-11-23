@@ -1,0 +1,183 @@
+
+#include <iostream>
+#include <vector>
+#include <string>
+#include <math.h>
+#include <cstdio>
+#include <cstdlib>
+#include <fstream>
+#include <random>
+
+using namespace std;
+
+
+void leapfrog(double array_p_phi[], int N_md, double J, double h, int N)
+{
+    double epsilon= 1.0/N_md;
+
+    array_p_phi[1] = array_p_phi[1] + epsilon*array_p_phi[0]/2;
+    for (int i = 0; i < N_md-1; i++)
+    {
+    array_p_phi[0]= array_p_phi[0] - epsilon*(array_p_phi[1]/J-N*tanh(h+array_p_phi[1]));
+    array_p_phi[1] = array_p_phi[1] + epsilon*array_p_phi[0];
+    }
+    array_p_phi[0]= array_p_phi[0] - epsilon*(array_p_phi[1]/J-N*tanh(h+array_p_phi[1]));
+    array_p_phi[1] = array_p_phi[1] + epsilon*array_p_phi[0]/2;
+}
+
+double Hamiltionian(double p,double phi, double J, int N, double h)
+{
+    return p*p/2+phi*phi/(2*J)-N*log(2*cosh(h+phi));
+}
+
+double magnitization(double phi, double h)
+{
+    return tanh(h+phi);
+}
+
+double energy(double phi, double h, int N, double J)
+{
+    double beta =1;
+    return -1/N-phi*phi/(2*J*N)-h*tanh(h+phi);
+}
+
+int factorial(int n)
+{
+    if(n > 1)
+        return n * factorial(n - 1);
+    else
+        return 1;
+}
+
+double function(double J, double h, double x)
+{
+    return exp(0.5*J*x*x+h*x);
+}
+double Z_analytic(double J, double h, int N)
+{
+    double sum=0;
+    for (int i = 0; i < N; i++)
+    {
+        sum+= (double)factorial(N)/(factorial(i)*factorial(N-i))*function(J,h,N-2*i);
+        
+    }
+    return sum;
+}
+double magnitization_analytic(double J, double h, int N)
+{
+    double sum = 0;
+    for (int i = 0; i < N; i++)
+    {
+        sum+=(double)factorial(N)/(factorial(i)*factorial(N-i))*(N-2*i)*function(J,h,N-2*i);
+    }
+    sum = sum/(N*Z_analytic(J,h,N));
+    return sum;
+    
+}
+
+double energy_analytic(double J, double h, int N)
+{
+    double sum = 0;
+    for (int i = 0; i < N; i++)
+    {
+        sum+=(double)factorial(N)/(factorial(i)*factorial(N-i))*(0.5*J*(N-2*i)*(N-2*i)+h*(N-2*i))*function(J,h,N-2*i);
+    }
+    sum = -sum/(N*Z_analytic(J,h,N));
+    return sum;
+}
+
+
+
+
+int N;
+int N_md;
+double h;
+double J;
+
+int main()
+{
+fstream f;//this let us open/write in external Data
+    f.open("convergence.dat", ios::out);
+
+    double phi_0=2;
+    double p_0=2;
+    N=20;
+    h=0.5;
+    J=1;
+    double array_p_phi[2];
+    double difference_of_hamiltonian;
+    for (int i = 1; i <= 100; i++)
+    {
+        array_p_phi[0]=p_0;
+        array_p_phi[1]=phi_0;
+        leapfrog(array_p_phi, i,J,  h, N);
+        difference_of_hamiltonian= (Hamiltionian(array_p_phi[0],array_p_phi[1], J, N, h)-Hamiltionian(p_0,phi_0, J, N, h))/Hamiltionian(p_0,phi_0, J, N, h);
+        f<< i <<' '<< difference_of_hamiltonian <<endl;
+    }
+    
+f.close();
+
+    f.open("long_range_ising.dat", ios::out);
+    N_md= 400;
+    double array[5000];
+    int success_rate;
+    double magnitization_per_site[4],energy_per_site[4];
+    double p_start, phi_start, random_number,Hstart,Hend;
+
+    default_random_engine generator;
+    normal_distribution<double> distribution(0,1);
+    
+    for (int k = 0; k < 50; k++)
+    {
+        J= 0.2+1.8*k/49;
+    for (int n = 0; n < 4; n++)
+    {
+        N=5*(n+1);
+            
+        success_rate=0;
+    array_p_phi[1]= 100;
+    
+    for (int i = 0; i < 5000; i++)
+    {
+    random_number=((double)rand() / (double)RAND_MAX);
+    array_p_phi[0]= distribution(generator);
+    phi_start =array_p_phi[1];
+    
+    p_start=array_p_phi[0];
+    leapfrog(array_p_phi, N_md, J, h, N);
+    Hstart=Hamiltionian(p_start,phi_start, J, N,  h);
+    Hend=Hamiltionian(array_p_phi[0],array_p_phi[1], J, N,  h);
+
+    if(random_number<=exp(-(Hstart-Hend)))
+    {
+        success_rate+=1;
+        array[i]=array_p_phi[1];
+    }
+    else
+    {
+    array_p_phi[0]=p_start;
+    array_p_phi[1]=phi_start;
+    array[i]=array_p_phi[1];
+    }
+    }
+    //cout<< success_rate<<endl;
+    magnitization_per_site[n]=0;
+    energy_per_site[n]=0;
+    for (int i = 0; i < 4000; i++)
+    {
+        magnitization_per_site[n]+=magnitization(array[i+1000],h);
+        energy_per_site[n]+=energy(array[i+1000],h,N,J);
+    }
+    magnitization_per_site[n]=magnitization_per_site[n]/4000;
+    energy_per_site[n]=energy_per_site[n]/4000;
+    
+        }
+        f<< J << ' '<< magnitization_per_site[0]<< ' '<< magnitization_per_site[1]<< ' '<< magnitization_per_site[2]<< ' '<< magnitization_per_site[3]<< ' '<< energy_per_site[0]<< ' ' << energy_per_site[1]<< ' '<< energy_per_site[2]<< ' '<< energy_per_site[3]<< ' '<<magnitization_analytic(J,h,5) << ' ' <<magnitization_analytic(J,h,10) << ' '<<magnitization_analytic(J,h,15) << ' '<<magnitization_analytic(J,h,20) << ' '<< energy_analytic(J,h,5)<< ' '<< energy_analytic(J,h,10)<< ' '<< energy_analytic(J,h,15)<< ' '<< energy_analytic(J,h,20)<<endl;
+        
+    }
+    
+    
+
+f.close();
+
+}
