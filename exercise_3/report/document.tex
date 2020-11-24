@@ -31,7 +31,9 @@
 	\maketitle
 \section{Introduction}
 
-We already did the one dimensional and two dimensional Ising mode in our previous two exercises. Here we can discuss about long-range Ising model by applying HMC. In this report, we can just include some necessary expression on theory part and in next topic we will illustrate the questions of exercise sheet and analyses the other results. Finally, we can conclude our findings in last part of the report.
+We already did the one dimensional and two dimensional Ising mode in our previous two exercises. Here we can discuss about long-range Ising model by applying HMC. In long-range nature of interaction, we must renormalize the interaction by N-1 to avoid the solutions blow up. To do so, we can introducing  $ \hat{J}=J/N $.
+
+In this report, we can just include some necessary expression on theory part and in next topic we will illustrate the questions of exercise sheet and analyses the other results. Finally, we can conclude our findings in last part of the report.
 \section{Theory}
 Here we, also, use the Hamiltonian as:
 \begin{equation}
@@ -62,6 +64,51 @@ Also,
 \dot{P}=-\frac{\partial H}{\partial \phi}= \frac{\phi}{\beta \hat{J}} - N \tanh(\beta h+ \phi)
 \end{equation}
 
+To do leapfrog algorithm we can follow following steps
+\begin{itemize}
+	\item Set $(\pi, \phi) = (p_{0}, \phi_{0}) $
+	\item At first half, $\phi=\phi +\frac{\epsilon}{2} \pi $\\
+	Where, $ \epsilon=\frac{1}{N_{md}} $ split of trajectory upto small pieces $ N_{md} $.
+	\item  repeat $ N_{md} - 1$ times\\
+	$ \pi=\pi -\epsilon(\frac{\phi}{\beta \hat{J}} - N \tanh (\beta h + \phi)) $\\
+	$\phi=\phi +\epsilon \pi $
+	\item Last step $ \pi=\pi -\epsilon(\frac{\phi}{\beta \hat{J}} - N \tanh (\beta h + \phi)) $\\
+	$\phi=\phi +\frac{\epsilon}{2}\pi $
+\item	Set $(P_{f}, \phi_{f}) = (\pi, \phi) $
+\end{itemize}
+To working with leapfrog algorithm, we have used the HMC algorithm is as follows:
+\begin{itemize}
+	\item Sample $ P \epsilon[0,1] $
+	\item Integrate the EoMs using leapfrog to obtain a trial $ P_{0}, \phi_{0} $
+	\item $P_{cc} =min{1 e^{H(P, \phi)- H(P^{\prime}, \phi^{\prime})}} $
+	\item Repeat
+\end{itemize}
+Here by plotting the convergence of leap-frog integrator as a number of integration steps $ N_{md}$ we get a graph \ref{fig:convergence}. In this graph, on the basis of literature, we expect the exponentially decreasing the Hamiltonian with increasing the number of integration steps. But, it is not quite undergoing exponentially decrease. 
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.8\linewidth]{convergence.png}
+	\caption{Convergence of leap-frog integrator as a number of integration steps $ N_{md}$  .}
+	\label{fig:convergence}
+\end{figure}
+
+To determine the average energy per site, we have set $ h=(\beta h)= 0.5 $ and $ J=(\beta J) \epsilon[0.2, 2.0] $. Then, we plotted a graph J vs average energy with different N. From figure \ref{fig:AEnergy} we can see that the average energy decreases more slightly with increasing J at higher number of sites. Also, the numerical value is quite follow the analytic value.
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.6\linewidth]{energy.png}\includegraphics[width=0.6\linewidth]{energy_comparison.png}
+	\caption{The average energy per site with different numbers and comparison of its analytic and numerical values.}
+	\label{fig:AEnergy}
+\end{figure}
+
+To calculate the mean magnetization we have set the value of h and J same as in calculation of average energy. In the output graph \ref{fig:magnetization} between J and average magnetization with different number of sites, we can see that at low J spins are not parallel; however, at higher J all the spins with different site follow parallel paths. We think that in long range Ising model every particles interact each other. Therefore all the spins quickly flow up direction. Also, here, the numerical value has quite good agreement with analytic. 
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.6\linewidth]{magnitization.png}\includegraphics[width=0.6\linewidth]{magnitization_comparision.png}
+	\caption{The mean magnetization per site with different numbers and comparison of its analytic and numerical values.}
+	\label{fig:magnetization}
+\end{figure}
+
+\section{Conclusion}
+To sum up, the convergence of leap-frog integrator as a number of integration steps $ N_{md}$ the Hamiltonian exponentially decreases the with increasing the number of integration steps. In long range ising model all spins interact each other at low external magnetic field and follow the parallel path at higher  coupling constant. 
 \begin{thebibliography}{12}
 	\bibitem{exercise-sheet} 
 	Thomas Luu, Andreas Nogga, Marcus Petschlies and  Andreas Wirzba, Exercise-sheet, 2020. 
