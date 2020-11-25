@@ -86,6 +86,16 @@ double energy_analytic(double J, double h, int N)
     return sum;
 }
 
+double standard_deviation(int R, int start_value, double mu, double array[])
+{
+    double deviation=0;
+    for (int i = start_value-1; i < R; i++)
+    {
+        deviation+=(array[i]-mu)*(array[i]-mu);
+    }
+    deviation= sqrt(deviation/(R-start_value-1));
+    return deviation;
+}
 
 
 
@@ -111,18 +121,19 @@ fstream f;//this let us open/write in external Data
         array_p_phi[0]=p_0;
         array_p_phi[1]=phi_0;
         leapfrog(array_p_phi, i,J,  h, N);
-        difference_of_hamiltonian= (Hamiltionian(array_p_phi[0],array_p_phi[1], J, N, h)-Hamiltionian(p_0,phi_0, J, N, h))/Hamiltionian(p_0,phi_0, J, N, h);
+        difference_of_hamiltonian= (Hamiltionian(p_0,phi_0, J, N, h)-Hamiltionian(array_p_phi[0],array_p_phi[1], J, N, h))/Hamiltionian(p_0,phi_0, J, N, h);
         f<< i <<' '<< difference_of_hamiltonian <<endl;
     }
     
 f.close();
 
     f.open("long_range_ising.dat", ios::out);
-    N_md= 400;
+    N_md= 100;
+    h=0.5;
     double array[5000];
     int success_rate;
-    double magnitization_per_site[4],energy_per_site[4];
-    double p_start, phi_start, random_number,Hstart,Hend;
+    double magnitization_per_site[4],energy_per_site[4], error[4], error_m[4],error_e[4];
+    double p_start, phi_start, random_number,Hstart,Hend, expactation_value;
 
     default_random_engine generator;
     normal_distribution<double> distribution(0,1);
@@ -163,16 +174,21 @@ f.close();
     //cout<< success_rate<<endl;
     magnitization_per_site[n]=0;
     energy_per_site[n]=0;
+    expactation_value=0;
     for (int i = 0; i < 4000; i++)
     {
         magnitization_per_site[n]+=magnitization(array[i+1000],h);
         energy_per_site[n]+=energy(array[i+1000],h,N,J);
+        expactation_value+=array[i+1000];
     }
+    expactation_value=expactation_value/4000;
     magnitization_per_site[n]=magnitization_per_site[n]/4000;
     energy_per_site[n]=energy_per_site[n]/4000;
-    
-        }
-        f<< J << ' '<< magnitization_per_site[0]<< ' '<< magnitization_per_site[1]<< ' '<< magnitization_per_site[2]<< ' '<< magnitization_per_site[3]<< ' '<< energy_per_site[0]<< ' ' << energy_per_site[1]<< ' '<< energy_per_site[2]<< ' '<< energy_per_site[3]<< ' '<<magnitization_analytic(J,h,5) << ' ' <<magnitization_analytic(J,h,10) << ' '<<magnitization_analytic(J,h,15) << ' '<<magnitization_analytic(J,h,20) << ' '<< energy_analytic(J,h,5)<< ' '<< energy_analytic(J,h,10)<< ' '<< energy_analytic(J,h,15)<< ' '<< energy_analytic(J,h,20)<<endl;
+    error[n]=standard_deviation(5000,1000, expactation_value,array);
+    error_m[n]= 1/(cosh(h+expactation_value)*cosh(h+expactation_value))*error[n];
+    error_e[n]= (expactation_value/J*h/(cosh(h+expactation_value)*cosh(h+expactation_value)))*error[n];
+    }
+        f<< J << ' '<< magnitization_per_site[0]<< ' ' <<error_m[0]<<  ' '<< magnitization_per_site[1]<< ' ' <<error_m[1]<< ' '<< magnitization_per_site[2]<< ' ' <<error_m[2]<< ' '<< magnitization_per_site[3]<< ' ' <<error_m[3]<< ' '<< energy_per_site[0]<< ' ' <<error_e[0]<< ' ' << energy_per_site[1]<< ' ' <<error_e[1]<< ' '<< energy_per_site[2]<< ' ' <<error_e[2]<< ' '<< energy_per_site[3]<< ' ' <<error_e[3]<< ' '<<magnitization_analytic(J,h,5) << ' ' <<magnitization_analytic(J,h,10) << ' '<<magnitization_analytic(J,h,15) << ' '<<magnitization_analytic(J,h,20) << ' '<< energy_analytic(J,h,5)<< ' '<< energy_analytic(J,h,10)<< ' '<< energy_analytic(J,h,15)<< ' '<< energy_analytic(J,h,20)<<endl;
         
     }
     

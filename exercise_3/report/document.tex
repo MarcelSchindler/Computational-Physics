@@ -53,8 +53,21 @@ We define the artificial Hamiltonian as,
 \end{equation}
 
 \section{Problems Solving and Analysis}
+For question one we look at:
+\begin{equation}
+	\log(Z)=\int_{-\infty}^{+\infty}d\phi\left[-\log(\sqrt{2\pi  J})+\frac{-\phi^2}{2  J}+N\log(2\cosh(\beta h+\phi))\right]
+\end{equation}
+In this quation we already set $J=\beta\hat{J}$. Now we can take the derivativ:
+\begin{equation}
+	<m>=\frac{1}{N\beta}\frac{\partial}{\partial h}=\int_{-\infty}^{+\infty}d\phi\underbrace{\tanh(\beta h+\phi)}_{m[\phi]}
+\end{equation}
+and
+\begin{align}
+	<\epsilon>=\frac{1}{N}\frac{\partial}{\partial \beta}=&\int_{-\infty}^{+\infty}d\phi\frac{\partial}{\partial J}\frac{\partial J}{\partial \beta}\left(-\log(\sqrt{2\pi J})+\frac{-\phi^2}{2 J}\right)+\frac{\partial}{\partial \beta}N\log(2\cosh(\beta h+\phi))\\
+	=& \int_{-\infty}^{+\infty}d\phi \underbrace{-\left(1+\frac{\phi^2}{2 J}+h \tanh(\beta h+\phi)\right)}_{\epsilon[\phi]}\text{.}
+\end{align}
 
-To do question 2 of the exercise sheet, from equation \ref{equ:ArtificialH} we get,
+To do question two of the exercise sheet, from equation \ref{equ:ArtificialH} we get,
 
 \begin{equation}
 \dot{\phi}=\frac{\partial H}{\partial P}= P
@@ -83,7 +96,7 @@ To working with leapfrog algorithm, we have used the HMC algorithm is as follows
 	\item $P_{cc} =min{1 e^{H(P, \phi)- H(P^{\prime}, \phi^{\prime})}} $
 	\item Repeat
 \end{itemize}
-Here by plotting the convergence of leap-frog integrator as a number of integration steps $ N_{md}$ we get a graph \ref{fig:convergence}. In this graph, on the basis of literature, we expect the exponentially decreasing the Hamiltonian with increasing the number of integration steps. But, it is not quite undergoing exponentially decrease. 
+Here by plotting the convergence of leap-frog integrator as a number of integration steps $ N_{md}$ we get a graph \ref{fig:convergence}. In this graph, on the basis of literature, we expect the exponentially decreasing the Hamiltonian with increasing the number of integration steps which we can also see in our plot.
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=0.8\linewidth]{convergence.png}
@@ -106,9 +119,32 @@ To calculate the mean magnetization we have set the value of h and J same as in 
 	\caption{The mean magnetization per site with different numbers and comparison of its analytic and numerical values.}
 	\label{fig:magnetization}
 \end{figure}
-
+\section{Error-Analysis}
+In this section we want to do error-analysis. We did not include errors befor because the graphs become unreadable. So now we want to focus on the eroor. We use the bootsstrap method. Thus we get:
+\begin{equation}
+	\bar{\mu_{bs}}=\frac{1}{R}\sum_{R}^{b=1}\bar{\mu^b}
+\end{equation}
+\begin{equation}
+\delta\bar{\mu_{bs}}= sd({\bar{\mu^b}})=\sqrt{\frac{1}{R-1}\sum_{R}^{b=1}(\bar{\mu^b}-\bar{\mu_{bs}})^2}
+\end{equation}
+with $\mu^b$ our samples. After we got $\delta\bar{\mu_{bs}}$ we can do propagation of uncertainty and get:
+\begin{equation}
+	\delta <m>=\frac{\partial }{\partial \phi} \tanh(h+\phi_bs)\cdot\delta\bar{\phi_{bs}}
+\end{equation}
+and
+\begin{equation}
+\delta <\epsilon>=\frac{\partial }{\partial \phi} -\left(1+\frac{\phi^2}{2J}+ \tanh(h+\phi_bs)\right)\cdot\delta\bar{\phi_{bs}}
+\end{equation}
+We then get the graphs in \ref{fig:error}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.6\linewidth]{magnitization_error.png}\includegraphics[width=0.6\linewidth]{energy_error.png}
+	\caption{Error Analysis for the magnitization and for the energy}
+	\label{fig:error}
+\end{figure}
+We can see that the error is way higher for lower J and with increasing J the error is to small to see it in this graph. So it makes sense that our calculations are better for higher J and not good for lower J because the error in our numerical algorithm is really high.
 \section{Conclusion}
-To sum up, the convergence of leap-frog integrator as a number of integration steps $ N_{md}$ the Hamiltonian exponentially decreases the with increasing the number of integration steps. In long range ising model all spins interact each other at low external magnetic field and follow the parallel path at higher  coupling constant. 
+To sum up, the convergence of leap-frog integrator as a number of integration steps $ N_{md}$ the difference between the Hamiltonians exponentially decreases the with increasing the number of integration steps. In long range ising model all spins interact each other at low external magnetic field and follow the parallel path at higher  coupling constant. 
 \begin{thebibliography}{12}
 	\bibitem{exercise-sheet} 
 	Thomas Luu, Andreas Nogga, Marcus Petschlies and  Andreas Wirzba, Exercise-sheet, 2020. 
