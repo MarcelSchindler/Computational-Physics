@@ -96,6 +96,35 @@ double standard_deviation(int R, int start_value, double mu, double array[])
     deviation= sqrt(deviation/(R-start_value-1));
     return deviation;
 }
+double  autocorrelation(double array[], double expected_value, int tau, int arraylenght)
+{
+    int count=0;
+    double C=0;
+    for (int i = 0; i < arraylenght-tau; i++)
+    {
+        for (int j = 0; j < tau; j++)
+        {
+          C+=(array[i]-expected_value)*(array[i+j]*expected_value);
+          count+=1;
+        }
+        
+    }
+    C= C/count;
+    return C;
+}
+double autocorrelation_blocking(double array[], double expected_value, int tau, int arraylenght, int b)
+{
+    int blocks= arraylenght/b;
+    double blocking_array[blocks]={0};
+    for (int i = 0; i < blocks; i++)
+    {
+        for (int j = 0; j < b; j++)
+        {
+            blocking_array[i]+=array[i*b+j];
+        }
+    }
+    
+}
 
 
 
@@ -103,52 +132,36 @@ int N;
 int N_md;
 double h;
 double J;
+double array_p_phi[2];
+double array[12800], array_spare[12800];
+double correlation_function[8000];
 
 int main()
 {
-fstream f;//this let us open/write in external Data
-    f.open("convergence.dat", ios::out);
-//first we start with the convergence of the leapfrog 
-    double phi_0=2;
-    double p_0=2;
-    N=20;
-    h=0.5;
-    J=1;
-    double array_p_phi[2];
-    double difference_of_hamiltonian;
-    for (int i = 1; i <= 100; i++)// we use 100 different values for N_md and calculate the difference
-    {
-        array_p_phi[0]=p_0;
-        array_p_phi[1]=phi_0;
-        leapfrog(array_p_phi, i,J,  h, N);
-        difference_of_hamiltonian= (Hamiltionian(p_0,phi_0, J, N, h)-Hamiltionian(array_p_phi[0],array_p_phi[1], J, N, h))/Hamiltionian(p_0,phi_0, J, N, h);
-        f<< i <<' '<< difference_of_hamiltonian <<endl;
-    }
-    
-f.close();
 // now we want to calculate the long range ising modell
-    f.open("long_range_ising.dat", ios::out);
-    N_md= 100;
+fstream f;//this let us open/write in external Data
+    f.open("comparison.dat", ios::out);
+
     h=0.5;
-    double array[5000];
+    N=5;
+    J=0.1/N;
+
     int success_rate;
-    double magnitization_per_site[4],energy_per_site[4], error[4], error_m[4],error_e[4];
+    double magnitization_per_site[2], error[2], error_m[2];
+    double magnitization_chain[10000];
     double p_start, phi_start, random_number,Hstart,Hend, expactation_value;
 
     default_random_engine generator;// we need this to get an random number from a normal deistribution
     normal_distribution<double> distribution(0,1);
-    
-    for (int k = 0; k < 50; k++)// We choose 50 different for J between 0.2-2 
+
+    for (int n = 0; n < 2; n++)
     {
-        J= 0.2+1.8*k/49;
-    for (int n = 0; n < 4; n++)// we choose 4 different values for N between 5-20
-    {
-        N=5*(n+1);
-            
-        success_rate=0;
-    array_p_phi[1]= 100;
+      N_md=4+96*n;
     
-    for (int i = 0; i < 5000; i++)
+    success_rate=0;
+    array_p_phi[1]= 0.5;
+    
+    for (int i = 0; i < 12800; i++)
     {
     random_number=((double)rand() / (double)RAND_MAX);
     array_p_phi[0]= distribution(generator);
@@ -171,27 +184,42 @@ f.close();
     }
     }
     magnitization_per_site[n]=0;
-    energy_per_site[n]=0;
-    expactation_value=0;
-    for (int i = 0; i < 4000; i++)// we consider thermalization. so we take only 4000 samples
+
+
+
+    if (n==0)
     {
-        magnitization_per_site[n]+=magnitization(array[i+1000],h);//calculate the magnitization
-        energy_per_site[n]+=energy(array[i+1000],h,N,J);//calculate the energy
-        expactation_value+=array[i+1000];//calculate the error of phi
+    for (int i = 0; i < 12800; i++)
+    {
+        array_spare[i]=array[i];
     }
-    expactation_value=expactation_value/4000;
-    magnitization_per_site[n]=magnitization_per_site[n]/4000;
-    energy_per_site[n]=energy_per_site[n]/4000;
-    error[n]=standard_deviation(5000,1000, expactation_value,array);//error analysis
-    error_m[n]= 1/(cosh(h+expactation_value)*cosh(h+expactation_value))*error[n];
-    error_e[n]= (expactation_value/J*h/(cosh(h+expactation_value)*cosh(h+expactation_value)))*error[n];
     }
-        f<< J << ' '<< magnitization_per_site[0]<< ' ' <<error_m[0]<<  ' '<< magnitization_per_site[1]<< ' ' <<error_m[1]<< ' '<< magnitization_per_site[2]<< ' ' <<error_m[2]<< ' '<< magnitization_per_site[3]<< ' ' <<error_m[3]<< ' '<< energy_per_site[0]<< ' ' <<error_e[0]<< ' ' << energy_per_site[1]<< ' ' <<error_e[1]<< ' '<< energy_per_site[2]<< ' ' <<error_e[2]<< ' '<< energy_per_site[3]<< ' ' <<error_e[3]<< ' '<<magnitization_analytic(J,h,5) << ' ' <<magnitization_analytic(J,h,10) << ' '<<magnitization_analytic(J,h,15) << ' '<<magnitization_analytic(J,h,20) << ' '<< energy_analytic(J,h,5)<< ' '<< energy_analytic(J,h,10)<< ' '<< energy_analytic(J,h,15)<< ' '<< energy_analytic(J,h,20)<<endl;
-        
+    cout << success_rate<<endl;
     }
-    
-    
+    for (int i = 0; i < 8000; i++)
+    {
+        magnitization_per_site[0]=magnitization(array_spare[i+4800],h);
+        magnitization_per_site[1]=magnitization(array[i+4800],h);
+         f<< i << ' '<< array_spare[i+4800]<< ' '<< array[i+4800]<< ' '<< magnitization_per_site[0]<< ' '<< magnitization_per_site[1] << endl;
+    } 
 
 f.close();
 
+
+    f.open("correlation.dat", ios::out);
+    expactation_value=0;
+    for (int i = 0; i < 8000; i++)// we consider thermalization
+    {
+        magnitization_chain[i]=magnitization(array[i+4800],h);//calculate the magnitization
+        expactation_value+=magnitization(array[i+4800],h);//calculate the error of phi
+    }
+    expactation_value=expactation_value/8000;
+    cout << expactation_value<< endl;
+    for (int i = 0; i < 3000; i++)
+    {
+        correlation_function[i]=autocorrelation(magnitization_chain, expactation_value, i, 8000);
+        f<< i<< ' ' << correlation_function[i]<< endl;
+    }
+    
+f.close();
 }
