@@ -96,13 +96,13 @@ double standard_deviation(int R, int start_value, double mu, double array[])
     deviation= sqrt(deviation/(R-start_value-1));
     return deviation;
 }
-double  autocorrelation(double array[], double expected_value, int tau, int arraylenght)
+double  autocorrelation(double array[], double expected_value, int tau, int arraylenght, int startvalue)
 {
     int count=0;
     double C=0;
     for (int i = 0; i < arraylenght-tau; i++)
     {
-          C+=(array[i]-expected_value)*(array[i+tau-1]*expected_value);
+          C+=(array[i+startvalue]-expected_value)*(array[i+startvalue+tau-1]*expected_value);
           count+=1;  
     }
     C= C/count;
@@ -198,7 +198,7 @@ f.close();
     expactation_value=expactation_value/8000;
     for (int i = 0; i < 8000; i++)
     {
-        correlation_function[i]=autocorrelation(magnitization_chain, expactation_value, i, 8000);
+        correlation_function[i]=autocorrelation(magnitization_chain, expactation_value, i, 8000, 4800);
         f<< i<< ' ' << correlation_function[i]<< endl;
     }
 
@@ -229,7 +229,7 @@ f.close();
     for (int i = 0; i < blocks; i++)//calculate the autocorrelation and standard error
     {
         standard_error[i][k]= sqrt(magnitization(blocking_array[i]*blocking_array[i],h)-magnitization(blocking_array[i],h)*magnitization(blocking_array[i],h));
-        correlation_blocking[i][k]=autocorrelation(blocking_array, expactation_value, i, blocks);
+        correlation_blocking[i][k]=autocorrelation(blocking_array, expactation_value, i, blocks, (int)1000*1/(b*b*b));// the last term is for thermalization. so with higher b we dont throw away so many values because we have less and the thermalization is shorter.
     }
         for (int i = blocks; i < 4000; i++)
     {
