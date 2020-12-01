@@ -102,30 +102,12 @@ double  autocorrelation(double array[], double expected_value, int tau, int arra
     double C=0;
     for (int i = 0; i < arraylenght-tau; i++)
     {
-        for (int j = 0; j < tau; j++)
-        {
-          C+=(array[i]-expected_value)*(array[i+j]*expected_value);
-          count+=1;
-        }
-        
+          C+=(array[i]-expected_value)*(array[i+tau-1]*expected_value);
+          count+=1;  
     }
     C= C/count;
     return C;
 }
-double autocorrelation_blocking(double array[], double expected_value, int tau, int arraylenght, int b)
-{
-    int blocks= arraylenght/b;
-    double blocking_array[blocks]={0};
-    for (int i = 0; i < blocks; i++)
-    {
-        for (int j = 0; j < b; j++)
-        {
-            blocking_array[i]+=array[i*b+j];
-        }
-    }
-    
-}
-
 
 
 int N;
@@ -194,7 +176,7 @@ fstream f;//this let us open/write in external Data
         array_spare[i]=array[i];
     }
     }
-    cout << success_rate<<endl;
+    cout << "sucess rate: "<< success_rate<< " for "<< (4+96*n)<<endl;
     }
     for (int i = 0; i < 8000; i++)
     {
@@ -214,12 +196,86 @@ f.close();
         expactation_value+=magnitization(array[i+4800],h);//calculate the error of phi
     }
     expactation_value=expactation_value/8000;
-    cout << expactation_value<< endl;
-    for (int i = 0; i < 3000; i++)
+    for (int i = 0; i < 8000; i++)
     {
         correlation_function[i]=autocorrelation(magnitization_chain, expactation_value, i, 8000);
         f<< i<< ' ' << correlation_function[i]<< endl;
     }
+
+    f.close();
+
+
+    f.open("blocking.dat", ios::out);
+    int b, blocks,arraylenght;
+    arraylenght=8000;
+    double correlation_blocking[4000][6];
+    double standard_error[4000][6];
+
+    for (int k = 0; k < 6; k++)
+    {
+    b= pow(2,k+1);
+    blocks= arraylenght/b;
+
+    double blocking_array[blocks]={0};
+
+    for (int i = 0; i < blocks; i++)
+    {
+        for (int j = 0; j < b; j++)
+        {
+            blocking_array[i]+=magnitization(array[i*b+j],h);
+        }
+        blocking_array[i]=blocking_array[i]/b;
+    }
+    for (int i = 0; i < blocks; i++)
+    {
+        standard_error[i][k]= sqrt(magnitization(blocking_array[i]*blocking_array[i],h)-magnitization(blocking_array[i],h)*magnitization(blocking_array[i],h));
+        correlation_blocking[i][k]=autocorrelation(blocking_array, expactation_value, i, blocks);
+    }
+        for (int i = blocks; i < 4000; i++)
+    {
+        correlation_blocking[i][k]=0;
+        standard_error[i][k]=0;
+    }
+    }
+    for (int i = 0; i < 4000; i++)
+    {
+        f<< i<< ' ' << correlation_blocking[i][0]<< ' ' << standard_error[i][0]<<' '<< correlation_blocking[i][1]<< ' ' << standard_error[i][1]<< ' ' << correlation_blocking[i][2]<< ' ' << standard_error[i][2]<< ' ' << correlation_blocking[i][3]<< ' ' << standard_error[i][3]<< ' ' << correlation_blocking[i][4]<< ' ' << standard_error[i][4]<< ' ' << correlation_blocking[i][5]<< ' ' << standard_error[i][5]<< endl;
+    }
+
+    f.close();
+
+    f.open("bootstrap.dat", ios::out);
+    int N_bs=100;
+    double magnitization_bootstrap[1000][N_bs];
+    double magnitization_bootstrap_average[N_bs]={0};
+    double bootstrap_delta[N_bs]={0};
+    for (int j = 0; j < N_bs; j++)
+    {
+        for (int i = 0; i < 1000; i++)
+        {
+          magnitization_bootstrap[i][j]=magnitization(array[4800+rand() % 8000],h);
+          magnitization_bootstrap_average[j]+=magnitization_bootstrap[i][j];
+        }
+        magnitization_bootstrap_average[j]=magnitization_bootstrap_average[j]/8000;
+    }
+    double magnitization_N_bs[N_bs]={0};
+    for (int i = 0; i < N_bs; i++)
+    {
+        for (int j = 0; j < i; j++)
+        {
+            magnitization_N_bs[i]+=magnitization_bootstrap_average[j];
+            bootstrap_delta[i]+=magnitization_bootstrap_average[j]*magnitization_bootstrap_average[j];
+        }
+        magnitization_N_bs[i]=magnitization_N_bs[i]/i;
+        bootstrap_delta[i]=bootstrap_delta[i]/i;
+        bootstrap_delta[i]=sqrt(bootstrap_delta[i]-magnitization_N_bs[i]*magnitization_N_bs[i]);
+    } 
+    for (int i = 0; i < N_bs; i++)
+    {
+        f<< i <<' ' <<bootstrap_delta[i]<< endl;
+    }
+
+    f.close();
     
-f.close();
+
 }
