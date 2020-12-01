@@ -173,7 +173,7 @@ fstream f;//this let us open/write in external Data
     {
     for (int i = 0; i < 12800; i++)
     {
-        array_spare[i]=array[i];
+        array_spare[i]=array[i];// so we have both arrays for N=4 and N=100
     }
     }
     cout << "sucess rate: "<< success_rate<< " for "<< (4+96*n)<<endl;
@@ -190,7 +190,7 @@ f.close();
 
     f.open("correlation.dat", ios::out);
     expactation_value=0;
-    for (int i = 0; i < 8000; i++)// we consider thermalization
+    for (int i = 0; i < 8000; i++)
     {
         magnitization_chain[i]=magnitization(array[i+4800],h);//calculate the magnitization
         expactation_value+=magnitization(array[i+4800],h);//calculate the error of phi
@@ -213,20 +213,20 @@ f.close();
 
     for (int k = 0; k < 6; k++)
     {
-    b= pow(2,k+1);
-    blocks= arraylenght/b;
+    b= pow(2,k+1);// so we get 2,4,8,16,32,64
+    blocks= arraylenght/b;// this is how many blocks we get
 
     double blocking_array[blocks]={0};
 
     for (int i = 0; i < blocks; i++)
     {
-        for (int j = 0; j < b; j++)
+        for (int j = 0; j < b; j++)// we create the blocks
         {
             blocking_array[i]+=magnitization(array[i*b+j],h);
         }
         blocking_array[i]=blocking_array[i]/b;
     }
-    for (int i = 0; i < blocks; i++)
+    for (int i = 0; i < blocks; i++)//calculate the autocorrelation and standard error
     {
         standard_error[i][k]= sqrt(magnitization(blocking_array[i]*blocking_array[i],h)-magnitization(blocking_array[i],h)*magnitization(blocking_array[i],h));
         correlation_blocking[i][k]=autocorrelation(blocking_array, expactation_value, i, blocks);
@@ -251,7 +251,7 @@ f.close();
     double bootstrap_delta[N_bs]={0};
     for (int j = 0; j < N_bs; j++)
     {
-        for (int i = 0; i < 1000; i++)
+        for (int i = 0; i < 1000; i++)// randomly sample magnitizations
         {
           magnitization_bootstrap[i][j]=magnitization(array[4800+rand() % 8000],h);
           magnitization_bootstrap_average[j]+=magnitization_bootstrap[i][j];
@@ -261,14 +261,14 @@ f.close();
     double magnitization_N_bs[N_bs]={0};
     for (int i = 0; i < N_bs; i++)
     {
-        for (int j = 0; j < i; j++)
+        for (int j = 0; j <= i; j++)// so we get an array with i different avarages for the magnitization
         {
             magnitization_N_bs[i]+=magnitization_bootstrap_average[j];
             bootstrap_delta[i]+=magnitization_bootstrap_average[j]*magnitization_bootstrap_average[j];
         }
         magnitization_N_bs[i]=magnitization_N_bs[i]/i;
         bootstrap_delta[i]=bootstrap_delta[i]/i;
-        bootstrap_delta[i]=sqrt(bootstrap_delta[i]-magnitization_N_bs[i]*magnitization_N_bs[i]);
+        bootstrap_delta[i]=sqrt(bootstrap_delta[i]-magnitization_N_bs[i]*magnitization_N_bs[i]);// we use standard deviation to get the bootstrap
     } 
     for (int i = 0; i < N_bs; i++)
     {
