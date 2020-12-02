@@ -100,9 +100,9 @@ double  autocorrelation(double array[], double expected_value, int tau, int arra
 {
     int count=0;
     double C=0;
-    for (int i = 0; i < arraylenght-tau; i++)
+    for (int i = 0; i < arraylenght-startvalue-tau-1; i++)
     {
-          C+=(array[i+startvalue]-expected_value)*(array[i+startvalue+tau-1]*expected_value);
+          C+=(array[i+startvalue]-expected_value)*(array[i+startvalue+tau]*expected_value);
           count+=1;  
     }
     C= C/count;
@@ -153,7 +153,7 @@ fstream f;//this let us open/write in external Data
     Hstart=Hamiltionian(p_start,phi_start, J, N,  h);
     Hend=Hamiltionian(array_p_phi[0],array_p_phi[1], J, N,  h);
 
-    if(random_number<=exp(-(Hstart-Hend)))//calculate the diffrence and choose if we want to accept it
+    if(random_number<=exp(-(Hend-Hstart)))//calculate the diffrence and choose if we want to accept it
     {
         success_rate+=1;
         array[i]=array_p_phi[1];//we did accept and write the start value in an array
@@ -198,7 +198,7 @@ f.close();
     expactation_value=expactation_value/8000;
     for (int i = 0; i < 8000; i++)
     {
-        correlation_function[i]=autocorrelation(magnitization_chain, expactation_value, i, 8000, 4800);
+        correlation_function[i]=autocorrelation(magnitization_chain, expactation_value, i, 8000, 0);
         f<< i<< ' ' << correlation_function[i]<< endl;
     }
 
@@ -210,6 +210,7 @@ f.close();
     arraylenght=8000;
     double correlation_blocking[4000][6];
     double standard_error[4000][6];
+    double expectation_value_blocking=0;
 
     for (int k = 0; k < 6; k++)
     {
@@ -225,10 +226,14 @@ f.close();
             blocking_array[i]+=magnitization(array[i*b+j],h);
         }
         blocking_array[i]=blocking_array[i]/b;
+        expectation_value_blocking+=blocking_array[i];
     }
-    for (int i = 0; i < blocks; i++)//calculate the autocorrelation and standard error
+    expectation_value_blocking=expectation_value_blocking/blocks;
+    
+    for (int i = 1; i < blocks; i++)//calculate the autocorrelation and standard error
     {
-        standard_error[i][k]= sqrt(magnitization(blocking_array[i]*blocking_array[i],h)-magnitization(blocking_array[i],h)*magnitization(blocking_array[i],h));
+        standard_error[i][k]= (expectation_value_blocking-blocking_array[i])*(expectation_value_blocking-blocking_array[i]);
+        standard_error[i][k]=sqrt(standard_error[i][k]/i);
         correlation_blocking[i][k]=autocorrelation(blocking_array, expactation_value, i, blocks, (int)1000*1/(b*b*b));// the last term is for thermalization. so with higher b we dont throw away so many values because we have less and the thermalization is shorter.
     }
         for (int i = blocks; i < 4000; i++)
@@ -237,7 +242,7 @@ f.close();
         standard_error[i][k]=0;
     }
     }
-    for (int i = 0; i < 4000; i++)
+    for (int i = 1; i < 4000; i++)
     {
         f<< i<< ' ' << correlation_blocking[i][0]<< ' ' << standard_error[i][0]<<' '<< correlation_blocking[i][1]<< ' ' << standard_error[i][1]<< ' ' << correlation_blocking[i][2]<< ' ' << standard_error[i][2]<< ' ' << correlation_blocking[i][3]<< ' ' << standard_error[i][3]<< ' ' << correlation_blocking[i][4]<< ' ' << standard_error[i][4]<< ' ' << correlation_blocking[i][5]<< ' ' << standard_error[i][5]<< endl;
     }
@@ -245,32 +250,41 @@ f.close();
     f.close();
 
     f.open("bootstrap.dat", ios::out);
-    int N_bs=100;
-    double magnitization_bootstrap[1000][N_bs];
+    int N_bs=1500;
+
     double magnitization_bootstrap_average[N_bs]={0};
     double bootstrap_delta[N_bs]={0};
+    double magnitization_N_bs[N_bs]={0};
     for (int j = 0; j < N_bs; j++)
     {
         for (int i = 0; i < 1000; i++)// randomly sample magnitizations
         {
-          magnitization_bootstrap[i][j]=magnitization(array[4800+rand() % 8000],h);
-          magnitization_bootstrap_average[j]+=magnitization_bootstrap[i][j];
+          magnitization_bootstrap_average[j]+=magnitization(array[4800+rand() % 8000],h);
         }
-        magnitization_bootstrap_average[j]=magnitization_bootstrap_average[j]/8000;
+        magnitization_bootstrap_average[j]=magnitization_bootstrap_average[j]/1000;
     }
-    double magnitization_N_bs[N_bs]={0};
+
     for (int i = 0; i < N_bs; i++)
     {
         for (int j = 0; j <= i; j++)// so we get an array with i different avarages for the magnitization
         {
             magnitization_N_bs[i]+=magnitization_bootstrap_average[j];
-            bootstrap_delta[i]+=magnitization_bootstrap_average[j]*magnitization_bootstrap_average[j];
         }
-        magnitization_N_bs[i]=magnitization_N_bs[i]/i;
-        bootstrap_delta[i]=bootstrap_delta[i]/i;
-        bootstrap_delta[i]=sqrt(bootstrap_delta[i]-magnitization_N_bs[i]*magnitization_N_bs[i]);// we use standard deviation to get the bootstrap
+        magnitization_N_bs[i]=magnitization_N_bs[i]/(i+1);
+       
     } 
-    for (int i = 0; i < N_bs; i++)
+    for (int i = 1; i < N_bs; i++)
+    {
+        for (int j = 0; j <= i; j++)
+        {
+            bootstrap_delta[i]+=(magnitization_N_bs[i]-magnitization_N_bs[j])*(magnitization_N_bs[i]-magnitization_N_bs[j]); // we use standard deviation to get the bootstrap
+        }
+        bootstrap_delta[i]=sqrt(bootstrap_delta[i]/(i));
+
+       
+    }
+    
+    for (int i = 1; i < N_bs; i++)
     {
         f<< i <<' ' <<bootstrap_delta[i]<< endl;
     }
