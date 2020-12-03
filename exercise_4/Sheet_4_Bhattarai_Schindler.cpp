@@ -100,12 +100,18 @@ double  autocorrelation(double array[], double expected_value, int tau, int arra
 {
     int count=0;
     double C=0;
+    double C_0=0;
     for (int i = 0; i < arraylenght-startvalue-tau-1; i++)
     {
           C+=(array[i+startvalue]-expected_value)*(array[i+startvalue+tau]*expected_value);
           count+=1;  
     }
-    C= C/count;
+    for (int i = 0; i < arraylenght-startvalue; i++)
+    {
+        C_0+=(array[i+startvalue]-expected_value)*(array[i+startvalue]*expected_value);
+    }
+    
+    C= C*(arraylenght-startvalue)/(count*C_0);
     return C;
 }
 
