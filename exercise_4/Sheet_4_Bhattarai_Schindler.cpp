@@ -232,11 +232,12 @@ f.close();
     
     for (int i = 1; i < blocks; i++)//calculate the autocorrelation and standard error
     {
-        standard_error[i][k]= (expectation_value_blocking-blocking_array[i])*(expectation_value_blocking-blocking_array[i]);
+        standard_error[i][k]= (expectation_value_blocking-blocking_array[i])*(expectation_value_blocking-blocking_array[i]);// standard deviation
         standard_error[i][k]=sqrt(standard_error[i][k]/i);
+        standard_error[i][k]= standard_error[i][k]/(sqrt(blocks));// given the formula on the sheet
         correlation_blocking[i][k]=autocorrelation(blocking_array, expactation_value, i, blocks, (int)1000*1/(b*b*b));// the last term is for thermalization. so with higher b we dont throw away so many values because we have less and the thermalization is shorter.
     }
-        for (int i = blocks; i < 4000; i++)
+    for (int i = blocks; i < 4000; i++)
     {
         correlation_blocking[i][k]=0;
         standard_error[i][k]=0;
