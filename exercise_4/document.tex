@@ -31,55 +31,82 @@
 	\maketitle
 	
 \section{Introduction}
-In this week’s exercise we apply proper analysis techniques to estimate the statistical error of a quantity estimated from a Markov Chain (MC).
+In this week’s exercise we apply proper analysis techniques to estimate the statistical error of a quantity estimated from a Markov Chain (MC). To do this exercise we can use most of the needed expression from previous exercise-sheets. In theory part, we only introduce some expressions and  we will try to illustrate the question with our findings and logic in the analysis part.
 \section{Theory}
-The Markov Chain has reached the equilibrium distribution we use the usual ensemble mean
-\begin{equation}
-\bar{m}_{N}= \frac{1}{N}\sum_{k=1}^{N} m(\phi_{k})
-\end{equation}
-as the Monte-Carlo estimator of the magnetization $ <m> $.\\
-
-\textbf{Autocorrelation}\\
-\textbf{Blocking}: It is also called binning.\\
-\textbf{The bootstrap}
-
+	The Markov Chain has reached the equilibrium distribution we use the usual ensemble mean
+	\begin{equation}
+	\bar{m}_{N}= \frac{1}{N}\sum_{k=1}^{N} m(\phi_{k})
+	\end{equation}
+	as the Monte-Carlo estimator of the magnetization $ <m> $.\\
+	
+	\textbf{Autocorrelation}
+	A useful quantity in which to analyze the correlations is the autocorrelation function,
+	\begin{equation}
+	C(\tau)= \frac{\bar{\Gamma}^{m}(\tau)}{\bar{\Gamma}^{m}(0)}
+	\end{equation}
+	Where; 
+	$  
+	\Gamma^{(m)}(|k -l|)= <(m(\phi_{k}) - <m>) <(m(\phi_{l}) - <m>) $
+	
+	\textbf{Blocking}: It is also called binning.\\
+	\textbf{The bootstrap}
+	
 \section{Analysis}
-To compare the two MC trajectories, we set $\beta \text{J}= 0.1 $; $\beta \text{h}= 0.5 $; n=5; for two different number of integration steps $ N_{md}=4$ and  $\text{N}_{md}= 100 $. we generate long MC for each run $ \text{N}=12800 $.
+To compare the two MC trajectories, we set $\beta \text{J}= 0.1 $; $\beta \text{h}= 0.5 $; n=5; for two different number of integration steps $ N_{md}=4$ and  $\text{N}_{md}= 100 $. we generate long MC for each run $ \text{N}=12800 $. To simulating this Markov Chain we took sampling HS field configurations $ \phi_{1}, \phi_{2}, \dots \phi_{N} $ for given number N of trajectories with the HMC. From this simulation and graphing we have output figure \ref{fig:comperision_4_100} and to compare these trajectories with $ N_{md}=4$ and $ N_{md}=100$ we plotted a graph \ref{fig:comperison}. 
 
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=0.6\linewidth]{comparison_magnitization_4.png}\includegraphics[width=0.6\linewidth]{comparison_magnitization_100.png}
-	\caption{Trajectories of the MC history of magnetization with different number of integration steps. Here, two graphs are at $ N_{md}=4$ and $ N_{md}=100$.}
-	\label{fig:comperison}
-\end{figure}
-\textbf{Autocorrelation}
 
+ From our research we got success rate for $ N_{md}=4$ is 6207 and $ N_{md}=100 $ is 12800.
+	
 \begin{figure}[H]
-	\centering
-	\includegraphics[width=0.6\linewidth]{autokorrelation.png}
-	\caption{Plot of the function of straightforward estimator $ C(\tau) $ to generated data sets.}
-	\label{fig:autocorrelation}
+		\centering
+\includegraphics[width=0.6\linewidth]{comparison_magnitization_4.png}\includegraphics[width=0.6\linewidth]{comparison_magnitization_100.png}
+\caption{Trajectories of the MC history of magnetization with different number of integration steps. Here, two graphs are at $ N_{md}=4$ and $ N_{md}=100$.}
+	\label{fig:comperision_4_100}
 \end{figure}
 
-\textbf{Blocking}: It is also called binning.
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=0.6\linewidth]{blocking_standard_deviation.png}\includegraphics[width=0.6\linewidth]{blocking_autokorrelation.png}
-	\caption{ The autocorrelation for blocked data for b= 2, 4, 8, 16, 32, and 64.}
-	\label{fig:blockingAutocorrelation}
-\end{figure}
 
-\textbf{The bootstrap}	
 \begin{figure}[H]
-	\centering
-	\includegraphics[width=0.6\linewidth]{autokorrelation.png}
-	\caption{ The stability of the error as a function of $ N_{bs} $ .}
-	\label{fig:boottrap}
+		\centering
+	\includegraphics[width=0.6\linewidth]{comparison.png}\includegraphics[width=0.6\linewidth]{comparison_magnitization.png}
+		\caption{Comparison of the magnetization with different number of integration steps at $ N_{md}=$ 4 and 100.}
+		\label{fig:comperison}
 \end{figure}	
-	\begin{thebibliography}{12}
-		\bibitem{exercise-sheet} 
-		Thomas Luu, Andreas Nogga, Marcus Petschlies and  Andreas Wirzba, Exercise-sheet, 2020. 
-		
-		
-	\end{thebibliography}	
+	
+\textbf{Autocorrelation}: An autocorrelation plot is one of the best way to check the randomness present in data. To determine the autocorrelation of time-series in dataset we plotted a functional decay nature of autocorrelation estimator function. From output graph \ref{fig:autocorrelation} we notice that in the first some lags it try to follow the exponentially decreasing path; however, when it reached very close to zero correlation estimator value then at the higher time lags there is the absence of any significance pattern. The data sets are fluctuate below and above the zero point. Therefore, it shows the quite randomness of the data set with time-series.
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.6\linewidth]{autokorrelation.png}
+		\caption{Plot of the function of straightforward estimator $ C(\tau) $ to generated data sets.}
+		\label{fig:autocorrelation}
+	\end{figure}
+	
+\textbf{Blocking}: It is also called binning. It is used to reduce the variance.
+To do so, we used the data generated for b= 2, 4, 8, 16, 32 and 64 with $ \text{N}_{\text{md}}=100 $ and calculated the autocorrelation for each block list. Afterward, we plotted the decay of autocorrelation function C$ \tau $ with time $ \tau $ and standard deviation of the blocked list, \ref{fig:blockingAutocorrelation} are the output graphs.
+	
+From fig \ref{fig:blockingAutocorrelation} we can see that the the autocorrelation function decay exponentially and follow the linear path.The autocorrelation function is plotted for two values of  in Figure 8.8. Furthermore, we notice that for small value of \text{b}(for b=2, 4) the autocorrelation function decays extremely slowly. However, as the value of \text{b} increase the autocorrelation function decays much faster. So, it has higher time to correlation in initial data points than forward. Since the autocorrelation has higher initial correlated time. Therefore, we ensure that it has behaved as our expectation. Moreover, the standard deviation is more for higher b and vice-versa.
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.6\linewidth]{blocking_standard_deviation.png}\includegraphics[width=0.6\linewidth]{blocking_autokorrelation.png}
+		\caption{ The autocorrelation for blocked data for b= 2, 4, 8, 16, 32, and 64. Left figure describe the decay of autocorrelation function $ C\tau $ and right graph for standard deviation of blocked list.}
+		\label{fig:blockingAutocorrelation}
+	\end{figure}
+	
+\textbf{The bootstrap}: In this section, we have to calculate the stability of the error as a function of $ \text{N}_{\text{bs}} $. To do so, we used the procedure to the bootstrap as given in the exercise-sheet. We can measure smaller standard deviation in bootstrap than calculated above. Therefore, we underestimate the error with the standard error.
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.6\linewidth]{bootstrap.png}
+		\caption{ The stability of the error as a function of $ N_{bs} $ .}
+		\label{fig:boottrap}
+	\end{figure}
+
+\section{Conclusion}
+From our research, we conclude that, the success rate for higher $ N_{md} $ is more. We have found for $ N_{md}=4$ is 6207 and $ N_{md}=100 $ is 12800. It would be the issue for ahead. Furthermore, we have found that the standard deviation for large b is much than its low values. Moreover, we have gotten that the blocking has higher standard error than bootstrap.
+	
+\begin{thebibliography}{12}
+\bibitem{exercise-sheet} 
+Thomas Luu, Andreas Nogga, Marcus Petschlies and  Andreas Wirzba, Exercise-sheet, 2020. 
+\end{thebibliography}	
 \end{document}
