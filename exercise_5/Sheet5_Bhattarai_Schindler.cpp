@@ -187,23 +187,9 @@ int main()
     
     a= L/N;
 
-    for (int j = 0; j < 15000; j++)
+    for (int j = 0; j < 15000; j++)// we do 15000 measurements
     {
         sweep(u,phi,a,N,0,delta);
-        /*for (int i = 0; i < N-1; i++)
-        {
-        random_number=((double)rand() / (double)RAND_MAX);
-        H_start=hamilton(u,phi,a,N,0);
-        target_site=1+(rand() % (N-2));
-        u_changed=u[target_site][0];
-        u[target_site][0]=u[target_site][0]+distribution(generator)*delta;
-        H_end=hamilton(u,phi,a,N,0);
-        if(random_number>exp(-(H_end-H_start)))
-        {
-            u[target_site][0]=u_changed;
-        }
-        }*/
-
         magnitization_per_site[j]=magnitization(u,a,N,0);
         magnitization_per_site_square[j]=magnitization_square(u,a,N,0);
         energy_per_site[j]= 1.0/N*hamilton(u,phi,a,N,0);
@@ -234,12 +220,12 @@ int main()
     expactation_value=0;
     for (int n = 0; n < 15000; n++)
     {
-        multigrid(u,phi,a,N,0, sweep_lvl ,gamma,max_level, delta);
+        multigrid(u,phi,a,N,0, sweep_lvl ,gamma,max_level, delta);// here again we do 15k measurements
         magnitization_per_site_square[n]=magnitization_square(u,a,N,0);
         magnitization_per_site[n]=magnitization(u,a,N,0);
     }
  
-    for (int i = 0; i < 13000; i++)
+    for (int i = 0; i < 13000; i++)//autokorellation 
     {
         expactation_value+=magnitization_per_site_square[i+2000];
     }
@@ -256,7 +242,7 @@ int main()
     f.close();
 
 
-    
+    // And do the same for gamma=2
     for (int i = 0; i < 3; i++)
     {
         for (int j = 0; j < 64; j++)
